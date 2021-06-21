@@ -1,46 +1,56 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const path = require('path');
-const { models: { Song, Track, Artist, Album }} = require('./db');
+const path = require("path");
+const {
+  models: { Song, Track, Artist, Album },
+} = require("./db");
 
-
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
-app.get('/', (req, res)=> res.sendFile(path.join(__dirname, 'index.html')));
-
-app.get('/api/artists', async(req, res, next)=> {
+app.use("/dist", express.static(path.join(__dirname, "dist")));
+app.use("/public", express.static(path.join(__dirname, "public")));
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/artists", (req, res) =>
+  res.sendFile(path.join(__dirname, "index.html"))
+);
+app.get("/albums", (req, res) =>
+  res.sendFile(path.join(__dirname, "index.html"))
+);
+app.get("/api/artists", async (req, res, next) => {
   try {
-    res.send(await Artist.findAll({
-      order: [['name']]
-    }));
-  }
-  catch(ex){
+    res.send(
+      await Artist.findAll({
+        order: [["name"]],
+      })
+    );
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.get('/api/albums', async(req, res, next)=> {
+app.get("/api/albums", async (req, res, next) => {
   try {
-    res.send(await Album.findAll({
-      order: [['name']],
-      include: [ Artist ]
-    }));
-  }
-  catch(ex){
+    res.send(
+      await Album.findAll({
+        order: [["name"]],
+        include: [Artist],
+      })
+    );
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.get('/api/albums/:id/tracks', async(req, res, next)=> {
+app.get("/api/albums/:id/tracks", async (req, res, next) => {
   try {
-    res.send(await Track.findAll({
-      order: [['idx']],
-      where: {
-        albumId: req.params.id
-      },
-      include: [ Song ]
-    }));
-  }
-  catch(ex){
+    res.send(
+      await Track.findAll({
+        order: [["idx"]],
+        where: {
+          albumId: req.params.id,
+        },
+        include: [Song],
+      })
+    );
+  } catch (ex) {
     next(ex);
   }
 });
